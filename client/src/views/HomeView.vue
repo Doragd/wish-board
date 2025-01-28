@@ -41,9 +41,7 @@ const error = ref('')
 
 onMounted(async () => {
   try {
-    const octokit = new Octokit({ 
-      auth: import.meta.env.VITE_GH_TOKEN 
-    })
+    const octokit = new Octokit()
     
     const { data } = await octokit.rest.repos.get({
       owner: import.meta.env.VITE_REPO_OWNER,
