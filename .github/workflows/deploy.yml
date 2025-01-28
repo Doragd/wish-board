@@ -1,0 +1,31 @@
+name: Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          
+      - name: Install Dependencies
+        working-directory: ./client
+        run: npm ci
+          
+      - name: Build Project
+        working-directory: ./client
+        run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # 仅在构建阶段使用
+          VITE_GH_TOKEN: '' # 强制前端不携带Token
+          
+      - name: Deploy to GH Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
