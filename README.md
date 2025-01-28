@@ -1,2 +1,0 @@
-# wish-board
-test
