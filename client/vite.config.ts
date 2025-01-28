@@ -1,10 +1,21 @@
+// client/vite.config.ts
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
-  base: '/wish-board/', // 必须与仓库名一致
+  base: '/wish-board/',
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  },
   build: {
-    outDir: '../dist'  // 构建输出到上级目录的dist
+    outDir: '../dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      external: []
+    }
   }
 })
