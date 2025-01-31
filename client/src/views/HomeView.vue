@@ -102,10 +102,10 @@ const getLabelColor = (label: string) => {
 
 // 处理心愿创建后的逻辑
 const handleWishCreated = async () => {
-  // 等待2秒确保GitHub API更新
+  // 等待0.5秒确保GitHub API更新
   setTimeout(async () => {
     await loadWishes();
-  }, 2000);
+  }, 500);
 };
 
 </script>
