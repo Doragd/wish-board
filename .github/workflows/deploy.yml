@@ -28,9 +28,7 @@ jobs:
           
       - name: Build Project
         working-directory: ./client
-        run: 
-          npm run build
-          echo $VITE_GH_TOKEN_B64
+        run: npm run build
         env:
           # 安全传递环境变量（不会暴露到客户端代码）
           VITE_REPO_OWNER: ${{ github.repository_owner }}
