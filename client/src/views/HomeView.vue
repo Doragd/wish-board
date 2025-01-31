@@ -7,8 +7,17 @@
       <div class="heart-divider">♥♥♥</div>
     </h1>
 
-    <!-- 新增心愿表单 -->
-    <WishForm @wish-created="handleWishCreated" />
+    <!-- 新增悬浮按钮 -->
+    <button class="float-button" @click="showForm = true">
+      ✨ 许个愿望
+    </button>
+
+    <!-- 悬浮表单 -->
+    <div v-if="showForm" class="modal-mask" @click.self="closeForm">
+      <div class="modal-wrapper">
+        <WishForm @wish-created="handleWishCreated" @close="closeForm" />
+      </div>
+    </div>
 
     <!-- 心愿列表 -->
     <div v-if="loading" class="loading">✨ 正在加载心愿...</div>
@@ -59,8 +68,25 @@ console.log('当前配置：', {
 });
 import { computed, onMounted } from 'vue';
 import { useWishStore } from '@/stores/wishStore';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import WishForm from '@/components/WishForm.vue';
+
+const showForm = ref(false);
+
+// 监听 showForm 变化
+watch(showForm, (newValue) => {
+  if (newValue) {
+    // 禁用滚动
+    document.body.style.overflow = 'hidden';
+  } else {
+    // 恢复滚动
+    document.body.style.overflow = '';
+  }
+});
+
+const closeForm = () => {
+  showForm.value = false;
+};
 
 // 使用 Pinia Store
 const store = useWishStore();
@@ -102,6 +128,7 @@ const getLabelColor = (label: string) => {
 
 // 处理心愿创建后的逻辑
 const handleWishCreated = async () => {
+  closeForm();
   // 等待确保GitHub API更新
   setTimeout(async () => {
     await loadWishes();
@@ -111,6 +138,63 @@ const handleWishCreated = async () => {
 </script>
 
 <style scoped>
+/* 新增样式 */
+.float-button {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  z-index: 999;
+  padding: 1rem 2rem;
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  transition: transform 0.3s;
+}
+
+.float-button:hover {
+  transform: scale(1.05);
+}
+
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-wrapper {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalEnter 0.3s ease-out;
+}
+
+@keyframes modalEnter {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .home-container {
   max-width: 800px;
   margin: 0 auto;
@@ -196,6 +280,31 @@ const handleWishCreated = async () => {
 .labels {
   display: flex;
   gap: 0.5rem;
+}
+
+.modal-wrapper {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalEnter 0.3s ease-out;
+  box-sizing: border-box; /* 防止内容溢出 */
+}
+
+@media (max-width: 600px) {
+  .float-button {
+    bottom: 20px;
+    right: 20px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .modal-wrapper {
+    padding: 1rem;
+  }
 }
 
 .label {

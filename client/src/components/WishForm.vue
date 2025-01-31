@@ -1,6 +1,9 @@
 <template>
     <div class="wish-form">
-      <h2>💌 许下心愿</h2>
+      <div class="form-header">
+      <h2>💌 写下你的心愿</h2>
+      <button class="close-button" @click="emit('close')">×</button>
+    </div>
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
           <label for="title">心愿标题</label>
@@ -50,8 +53,9 @@
         </div>
   
         <button type="submit" :disabled="isSubmitting || isTitleOverLimit || isContentOverLimit">
-          {{ isSubmitting ? '提交中...' : '许下心愿 ✨' }}
-        </button>
+      <span v-if="isSubmitting" class="loading-spinner"></span>
+      <span v-else>放飞心愿 ✨</span>
+    </button>
       </form>
     </div>
   </template>
@@ -64,7 +68,7 @@
   const MAX_TITLE_LENGTH = 50;  // 标题最大长度
   const MAX_CONTENT_LENGTH = 500;  // 内容最大长度
 
-  const emit = defineEmits(['wish-created']);
+  const emit = defineEmits(['wish-created', 'close']);
   
   interface FormData {
     title: string;
@@ -138,6 +142,50 @@ const handleSubmit = async () => {
   </script>
   
   <style scoped>
+  .loading-spinner {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+button[type='submit'] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+  .form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: #666;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  transition: color 0.3s;
+}
+
+.close-button:hover {
+  color: #ff6b6b;
+}
   .wish-form {
     max-width: 600px;
     margin: 2rem auto;
