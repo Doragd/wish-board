@@ -48,6 +48,12 @@
 </template>
 
 <script setup lang="ts">
+// 在setup顶部添加
+console.log('当前配置：', {
+  owner: import.meta.env.VITE_REPO_OWNER,
+  repo: import.meta.env.VITE_REPO_NAME,
+  token: import.meta.env.VITE_GH_TOKEN ? '***' : '未设置'
+});
 import { computed } from 'vue';
 import { useWishStore } from '@/stores/wishStore';
 

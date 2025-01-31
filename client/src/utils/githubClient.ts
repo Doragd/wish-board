@@ -16,19 +16,22 @@ export const fetchWishes = async (): Promise<Wish[]> => {
     const { data } = await octokit.rest.issues.listForRepo({
       owner: import.meta.env.VITE_REPO_OWNER,
       repo: import.meta.env.VITE_REPO_NAME,
-      labels: "wish", // 只获取标记为wish的issues
-      state: "open",
+      labels: 'wish',
+      state: 'open',
     });
 
-    return data.map((issue) => ({
+    return data.map((issue): Wish => ({
       id: issue.number,
-      title: issue.title,
-      content: issue.body || "",
+      title: issue.title || '未命名心愿',
+      content: issue.body || '',
       createdAt: issue.created_at,
-      labels: issue.labels?.map((l) => (typeof l === "string" ? l : l.name)) || [],
-      likes: issue.reactions?.plus_one || 0,
+      labels: (issue.labels || [])
+        .map(l => typeof l === 'string' ? l : l?.name || '')
+        .filter(Boolean) as string[],
+      likes: issue.reactions?.['+1'] || 0
     }));
   } catch (error) {
-    throw new Error("获取心愿列表失败");
+    console.error('API Error Details:', error);
+    throw new Error(`获取心愿列表失败: ${error instanceof Error ? error.message : '未知错误'}`);
   }
 };
