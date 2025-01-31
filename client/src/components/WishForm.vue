@@ -104,7 +104,11 @@
   isSubmitting.value = true;
 
   try {
-    const octokit = new Octokit()
+    const token = atob(import.meta.env.VITE_GH_TOKEN_B64 as string);
+
+    const octokit = new Octokit({
+      auth: token,
+    });
 
     console.log('提交数据：', {
       owner: import.meta.env.VITE_REPO_OWNER,
