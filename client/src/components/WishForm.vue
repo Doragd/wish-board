@@ -105,10 +105,10 @@
 
   try {
     console.log('token:', import.meta.env.VITE_GH_TOKEN_B64)
-    const token = atob(import.meta.env.VITE_GH_TOKEN_B64 as string);
+    // const token = atob(import.meta.env.VITE_GH_TOKEN_B64 as string);
 
     const octokit = new Octokit({
-      auth: token,
+      //auth: token,
     });
 
     console.log('提交数据：', {
