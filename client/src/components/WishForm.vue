@@ -8,9 +8,14 @@
             v-model="form.title"
             type="text"
             id="title"
+            :maxlength="MAX_TITLE_LENGTH"
             placeholder="请输入心愿标题"
             required
+            :class="{ 'input-warning': isTitleOverLimit }"
           />
+          <div class="char-count" :class="{ 'text-warning': isTitleOverLimit }">
+            {{ form.title.length }} / {{ MAX_TITLE_LENGTH }}
+          </div>
         </div>
   
         <div class="form-group">
@@ -18,10 +23,15 @@
           <textarea
             v-model="form.content"
             id="content"
+            :maxlength="MAX_CONTENT_LENGTH"
             placeholder="描述你的心愿..."
             rows="4"
             required
+            :class="{ 'input-warning': isContentOverLimit }"
           ></textarea>
+          <div class="char-count" :class="{ 'text-warning': isContentOverLimit }">
+            {{ form.content.length }} / {{ MAX_CONTENT_LENGTH }}
+          </div>
         </div>
   
         <div class="form-group">
@@ -39,7 +49,7 @@
           </div>
         </div>
   
-        <button type="submit" :disabled="isSubmitting">
+        <button type="submit" :disabled="isSubmitting || isTitleOverLimit || isContentOverLimit">
           {{ isSubmitting ? '提交中...' : '许下心愿 ✨' }}
         </button>
       </form>
@@ -47,8 +57,12 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, computed } from 'vue';
   import { Octokit } from 'octokit';
+  
+  // 定义长度限制常量
+  const MAX_TITLE_LENGTH = 50;  // 标题最大长度
+  const MAX_CONTENT_LENGTH = 500;  // 内容最大长度
   
   interface FormData {
     title: string;
@@ -65,6 +79,10 @@
   const availableTags = ['礼物', '旅行', '约会', '美食'];
   const isSubmitting = ref(false);
   
+  // 计算属性：检查输入是否超限
+  const isTitleOverLimit = computed(() => form.value.title.length > MAX_TITLE_LENGTH);
+  const isContentOverLimit = computed(() => form.value.content.length > MAX_CONTENT_LENGTH);
+  
   const toggleTag = (tag: string) => {
     const index = form.value.labels.indexOf(tag);
     if (index === -1) {
@@ -75,27 +93,47 @@
   };
   
   const handleSubmit = async () => {
-    if (isSubmitting.value) return;
-    isSubmitting.value = true;
-  
-    try {
-      const octokit = new Octokit();
-      await octokit.rest.issues.create({
-        owner: import.meta.env.VITE_REPO_OWNER,
-        repo: import.meta.env.VITE_REPO_NAME,
-        title: form.value.title,
-        body: form.value.content,
-        labels: ['wish', ...form.value.labels],
-      });
-  
-      alert('心愿已成功许下！✨');
-      form.value = { title: '', content: '', labels: [] }; // 重置表单
-    } catch (error) {
-      alert(`许愿失败：${error instanceof Error ? error.message : '未知错误'}`);
-    } finally {
-      isSubmitting.value = false;
-    }
-  };
+  if (isSubmitting.value) return;
+
+  // 输入验证
+  if (isTitleOverLimit.value || isContentOverLimit.value) {
+    alert('输入内容超出限制');
+    return;
+  }
+
+  isSubmitting.value = true;
+
+  try {
+    const octokit = new Octokit({
+      auth: import.meta.env.VITE_GH_TOKEN,  // 确保传递 Token
+    });
+
+    console.log('提交数据：', {
+      owner: import.meta.env.VITE_REPO_OWNER,
+      repo: import.meta.env.VITE_REPO_NAME,
+      title: form.value.title,
+      body: form.value.content,
+      labels: ['wish', ...form.value.labels],
+    });
+
+    const response = await octokit.rest.issues.create({
+      owner: import.meta.env.VITE_REPO_OWNER,
+      repo: import.meta.env.VITE_REPO_NAME,
+      title: form.value.title,
+      body: form.value.content,
+      labels: ['wish', ...form.value.labels],
+    });
+
+    console.log('API 响应：', response);
+    alert('心愿已成功许下！✨');
+    form.value = { title: '', content: '', labels: [] }; // 重置表单
+  } catch (error) {
+    console.error('API 错误详情：', error);
+    alert(`许愿失败：${error instanceof Error ? error.message : '未知错误'}`);
+  } finally {
+    isSubmitting.value = false;
+  }
+};
   </script>
   
   <style scoped>
@@ -139,6 +177,21 @@
   textarea:focus {
     border-color: #ff6b6b;
     outline: none;
+  }
+  
+  .input-warning {
+    border-color: #ff4757 !important;
+  }
+  
+  .char-count {
+    text-align: right;
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 0.25rem;
+  }
+  
+  .text-warning {
+    color: #ff4757;
   }
   
   .tags {
