@@ -7,6 +7,9 @@
       <div class="heart-divider">♥♥♥</div>
     </h1>
 
+    <!-- 新增心愿表单 -->
+    <WishForm @wish-created="handleWishCreated" />
+
     <!-- 心愿列表 -->
     <div v-if="loading" class="loading">✨ 正在加载心愿...</div>
     
@@ -56,6 +59,8 @@ console.log('当前配置：', {
 });
 import { computed } from 'vue';
 import { useWishStore } from '@/stores/wishStore';
+import { ref } from 'vue';
+import WishForm from '@/components/WishForm.vue';
 
 const store = useWishStore();
 store.loadWishes();
@@ -81,6 +86,12 @@ const getLabelColor = (label: string) => {
     '美食': '#ffd3b6'
   };
   return colors[label] || '#ddd';
+};
+
+// 处理心愿创建后的逻辑
+const handleWishCreated = () => {
+  // 刷新心愿列表
+  store.loadWishes();
 };
 </script>
 
