@@ -55,7 +55,7 @@
 console.log('当前配置：', {
   owner: import.meta.env.VITE_REPO_OWNER,
   repo: import.meta.env.VITE_REPO_NAME,
-  token: import.meta.env.VITE_GH_TOKEN_B64
+  token: import.meta.env.VITE_GH_TOKEN_B64 ? '***' : '未设置'
 });
 import { computed } from 'vue';
 import { useWishStore } from '@/stores/wishStore';
