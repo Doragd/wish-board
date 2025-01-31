@@ -5,16 +5,15 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # 关键修改1：添加最小权限声明
     permissions:
-      contents: write  # 用于推送gh-pages分支
-      issues: write    # 允许操作Issues（创建/修改心愿）
-      pull-requests: write  # 兼容部分API操作
+      contents: write  # 部署需要
+      issues: write    # 操作Issues需要
+      pull-requests: write
+      actions: read    # 允许访问Actions信息
       
     steps:
       - uses: actions/checkout@v3
         with:
-          # 关键修改2：启用持久化认证
           persist-credentials: true
 
       - name: Setup Node
@@ -30,15 +29,12 @@ jobs:
         working-directory: ./client
         run: npm run build
         env:
-          # 关键修改3：使用GitHub Actions自动生成的Token
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 替代自定义Token
-          # 关键修改4：传递必要参数
+          # 安全传递环境变量（不会暴露到客户端代码）
           VITE_REPO_OWNER: ${{ github.repository_owner }}
           VITE_REPO_NAME: ${{ github.event.repository.name }}
           
       - name: Deploy to GH Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          # 关键修改5：使用系统Token
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
