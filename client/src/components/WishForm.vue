@@ -63,6 +63,8 @@
   // 定义长度限制常量
   const MAX_TITLE_LENGTH = 50;  // 标题最大长度
   const MAX_CONTENT_LENGTH = 500;  // 内容最大长度
+
+  const emit = defineEmits(['wish-created']);
   
   interface FormData {
     title: string;
@@ -92,7 +94,7 @@
     }
   };
   
-  const handleSubmit = async () => {
+const handleSubmit = async () => {
   if (isSubmitting.value) return;
 
   // 输入验证
@@ -104,32 +106,28 @@
   isSubmitting.value = true;
 
   try {
-
-    const token = atob(import.meta.env.VITE_GH_TOKEN_B64 as string);
-
-    const octokit = new Octokit({
-      auth: token,
+    const response = await fetch(import.meta.env.VITE_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: form.value.title,
+        content: form.value.content,
+        labels: form.value.labels,
+      }),
     });
 
-    console.log('提交数据：', {
-      owner: import.meta.env.VITE_REPO_OWNER,
-      repo: import.meta.env.VITE_REPO_NAME,
-      title: form.value.title,
-      body: form.value.content,
-      labels: ['wish', ...form.value.labels],
-    });
+    if (!response.ok) {
+      throw new Error('提交失败');
+    }
 
-    const response = await octokit.rest.issues.create({
-      owner: import.meta.env.VITE_REPO_OWNER,
-      repo: import.meta.env.VITE_REPO_NAME,
-      title: form.value.title,
-      body: form.value.content,
-      labels: ['wish', ...form.value.labels],
-    });
-
-    console.log('API 响应：', response);
-    alert('心愿已成功许下！✨');
+    const result = await response.json();
+    console.log('API 响应：', result);
+    alert(`心愿已成功许下！✨\n查看心愿：${result.issueUrl}`);
     form.value = { title: '', content: '', labels: [] }; // 重置表单
+    // 触发重新获取心愿列表
+    emit('wish-created');
   } catch (error) {
     console.error('API 错误详情：', error);
     alert(`许愿失败：${error instanceof Error ? error.message : '未知错误'}`);
@@ -168,7 +166,7 @@
   
   input,
   textarea {
-    width: 100%;
+    width: 95%;
     padding: 0.75rem;
     border: 1px solid #ddd;
     border-radius: 8px;

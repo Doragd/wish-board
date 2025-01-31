@@ -12,6 +12,8 @@ export const useWishStore = defineStore("wish", {
     async loadWishes() {
       this.loading = true;
       this.error = '';
+      this.wishes = []; // 清空旧数据
+      
       try {
         this.wishes = await fetchWishes();
       } catch (err) {

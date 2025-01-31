@@ -55,21 +55,32 @@
 console.log('当前配置：', {
   owner: import.meta.env.VITE_REPO_OWNER,
   repo: import.meta.env.VITE_REPO_NAME,
-  token: import.meta.env.VITE_GH_TOKEN_B64 ? '***' : '未设置'
+  url: import.meta.env.VITE_API_URL
 });
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useWishStore } from '@/stores/wishStore';
 import { ref } from 'vue';
 import WishForm from '@/components/WishForm.vue';
 
+// 使用 Pinia Store
 const store = useWishStore();
-store.loadWishes();
 
+const loadWishes = async () => {
+  await store.loadWishes();
+};
+
+// 初始化加载心愿列表
+onMounted(() => {
+  store.loadWishes();
+});
+
+// 计算属性
 const loading = computed(() => store.loading);
 const error = computed(() => store.error);
 const wishes = computed(() => store.wishes);
 const sortedWishes = computed(() => store.sortedWishes);
 
+// 格式化日期
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('zh-CN', {
     year: 'numeric',
@@ -78,6 +89,7 @@ const formatDate = (dateStr: string) => {
   });
 };
 
+// 获取标签颜色
 const getLabelColor = (label: string) => {
   const colors: Record<string, string> = {
     '礼物': '#ff9a9e',
@@ -89,13 +101,22 @@ const getLabelColor = (label: string) => {
 };
 
 // 处理心愿创建后的逻辑
-const handleWishCreated = () => {
-  // 刷新心愿列表
-  store.loadWishes();
+const handleWishCreated = async () => {
+  // 等待2秒确保GitHub API更新
+  setTimeout(async () => {
+    await loadWishes();
+  }, 2000);
 };
+
 </script>
 
 <style scoped>
+.home-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 .romantic-title {
   color: #ff6b6b;
   text-align: center;
@@ -103,10 +124,27 @@ const handleWishCreated = () => {
 }
 
 .heart-divider {
-  color: #f52e2e;
+  color: #ff9a9e;
   font-size: 1.5em;
   margin: 0.5rem 0;
 }
+
+.loading {
+  text-align: center;
+  color: #ff9a9e;
+  font-size: 1.2em;
+}
+
+.error {
+  color: #ff4757;
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255, 71, 87, 0.1);
+  border-radius: 8px;
+  margin: 2rem auto;
+  max-width: 500px;
+}
+
 .wish-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 15px;
