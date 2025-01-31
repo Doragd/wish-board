@@ -31,7 +31,7 @@ jobs:
         run: npm run build
         env:
           # 关键修改3：使用GitHub Actions自动生成的Token
-          VITE_GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 替代自定义Token
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 替代自定义Token
           # 关键修改4：传递必要参数
           VITE_REPO_OWNER: ${{ github.repository_owner }}
           VITE_REPO_NAME: ${{ github.event.repository.name }}
