@@ -10,15 +10,14 @@ export interface Wish {
   likes: number;
 }
 
-export const fetchWishes = async (timestamp?: number): Promise<Wish[]> => {
+export const fetchWishes = async (): Promise<Wish[]> => {
   try {
     const octokit = new Octokit();
     const { data } = await octokit.rest.issues.listForRepo({
       owner: import.meta.env.VITE_REPO_OWNER,
       repo: import.meta.env.VITE_REPO_NAME,
       labels: 'wish',
-      state: 'open',
-      ...(timestamp && { since: new Date(timestamp).toISOString() })
+      state: 'open'
     });
 
     return data.map((issue): Wish => ({

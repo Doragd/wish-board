@@ -15,7 +15,7 @@ export const useWishStore = defineStore("wish", {
       this.wishes = []; // 清空旧数据
       
       try {
-        this.wishes = await fetchWishes(Date.now());
+        this.wishes = await fetchWishes();
       } catch (err) {
         const message = err instanceof Error ? err.message : '加载失败';
         this.error = `错误代码：${(err as any)?.status || 500}，原因：${message}`;
