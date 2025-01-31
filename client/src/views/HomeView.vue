@@ -105,7 +105,7 @@ const handleWishCreated = async () => {
   // 等待确保GitHub API更新
   setTimeout(async () => {
     await loadWishes();
-  }, 2000);
+  }, 500);
 };
 
 </script>

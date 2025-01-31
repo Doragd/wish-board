@@ -17,7 +17,8 @@ export const fetchWishes = async (): Promise<Wish[]> => {
       owner: import.meta.env.VITE_REPO_OWNER,
       repo: import.meta.env.VITE_REPO_NAME,
       labels: 'wish',
-      state: 'open'
+      state: 'open',
+      _: Date.now()
     });
 
     return data.map((issue): Wish => ({
