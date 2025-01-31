@@ -1,64 +1,81 @@
+<!-- src/views/HomeView.vue -->
 <template>
-  <div class="test-container">
+  <div class="home-container">
     <!-- 浪漫风格标题 -->
     <h1 class="romantic-title">
       <span>💌 给TA的心愿墙</span>
       <div class="heart-divider">♥♥♥</div>
     </h1>
 
-    <!-- 仓库信息展示 -->
-    <div v-if="loading" class="loading">加载中...</div>
+    <!-- 心愿列表 -->
+    <div v-if="loading" class="loading">✨ 正在加载心愿...</div>
     
     <div v-else-if="error" class="error">
-      😢 连接失败：{{ error }}
+      😢 加载失败：{{ error }}
     </div>
 
-    <div v-else class="repo-info">
-      <p>🎉 成功连接到仓库：{{ repoInfo.full_name }}</p>
-      <p>⭐ 星星数：{{ repoInfo.stargazers_count }}</p>
-      <p>📝 已有心愿：{{ repoInfo.open_issues_count }} 个</p>
+    <div v-else>
+      <div v-if="wishes.length === 0" class="empty">
+        🌸 还没有心愿，快来许下第一个愿望吧！
+      </div>
+
+      <div v-for="wish in sortedWishes" :key="wish.id" class="wish-card">
+        <div class="wish-header">
+          <h3>{{ wish.title }}</h3>
+          <div class="like-count">
+            ❤️ {{ wish.likes }}
+          </div>
+        </div>
+        
+        <p class="content">{{ wish.content }}</p>
+        
+        <div class="meta">
+          <span class="time">📅 {{ formatDate(wish.createdAt) }}</span>
+          <div class="labels">
+            <span 
+              v-for="label in wish.labels" 
+              :key="label"
+              class="label"
+              :style="{ backgroundColor: getLabelColor(label) }"
+            >
+              {{ label }}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { Octokit } from 'octokit'
+import { computed } from 'vue';
+import { useWishStore } from '@/stores/wishStore';
 
-interface RepoInfo {
-  full_name: string
-  stargazers_count: number
-  open_issues_count: number
-}
+const store = useWishStore();
+store.loadWishes();
 
-const repoInfo = ref<RepoInfo>({
-  full_name: '',
-  stargazers_count: 0,
-  open_issues_count: 0
-})
-const loading = ref(true)
-const error = ref('')
+const loading = computed(() => store.loading);
+const error = computed(() => store.error);
+const wishes = computed(() => store.wishes);
+const sortedWishes = computed(() => store.sortedWishes);
 
-onMounted(async () => {
-  try {
-    const octokit = new Octokit()
-    
-    const { data } = await octokit.rest.repos.get({
-      owner: import.meta.env.VITE_REPO_OWNER,
-      repo: import.meta.env.VITE_REPO_NAME
-    })
+const formatDate = (dateStr: string) => {
+  return new Date(dateStr).toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
 
-    repoInfo.value = {
-      full_name: data.full_name,
-      stargazers_count: data.stargazers_count,
-      open_issues_count: data.open_issues_count
-    }
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : '未知错误'
-  } finally {
-    loading.value = false
-  }
-})
+const getLabelColor = (label: string) => {
+  const colors: Record<string, string> = {
+    '礼物': '#ff9a9e',
+    '旅行': '#a8e6cf',
+    '约会': '#d4a5a5',
+    '美食': '#ffd3b6'
+  };
+  return colors[label] || '#ddd';
+};
 </script>
 
 <style scoped>
@@ -69,38 +86,77 @@ onMounted(async () => {
 }
 
 .heart-divider {
-  color: #ff9a9e;
+  color: #f52e2e;
   font-size: 1.5em;
   margin: 0.5rem 0;
 }
-
-.repo-info {
-  background: rgba(255, 245, 245, 0.9);
-  border-radius: 12px;
+.wish-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
   padding: 1.5rem;
-  margin: 2rem auto;
-  max-width: 500px;
-  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.1);
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.1);
+  transition: transform 0.2s;
 }
 
-.repo-info p {
-  margin: 0.8rem 0;
-  color: #795548;
+.wish-card:hover {
+  transform: translateY(-3px);
 }
 
-.loading {
+.wish-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.wish-header h3 {
+  color: #ff6b6b;
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.like-count {
+  background: rgba(255, 107, 107, 0.1);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.content {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9em;
+  color: #888;
+}
+
+.labels {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.label {
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8em;
+  color: white;
+}
+
+.empty {
   text-align: center;
+  padding: 2rem;
   color: #ff9a9e;
   font-size: 1.2em;
-}
-
-.error {
-  color: #ff4757;
-  text-align: center;
-  padding: 1rem;
-  background: rgba(255, 71, 87, 0.1);
-  border-radius: 8px;
-  margin: 2rem auto;
-  max-width: 500px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  margin: 2rem 0;
 }
 </style>
