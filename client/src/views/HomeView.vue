@@ -4,7 +4,18 @@
     <!-- 浪漫风格标题 -->
     <h1 class="romantic-title">
       <span>💌 给TA的心愿墙</span>
-      <div class="heart-divider">♥♥♥</div>
+      <div class="hand-drawn-divider">
+  <svg viewBox="0 0 100 10" class="brush-stroke">
+    <path d="M 0,5 Q 20,0 40,5 T 80,5 T 100,5" 
+          stroke="#ff6b6b" 
+          fill="none"
+          stroke-width="2"
+          stroke-linecap="round"/>
+  </svg>
+  <div class="stars">
+    <span class="star" v-for="n in 10" :key="n">✨</span>
+  </div>
+</div>
     </h1>
 
     <!-- 新增悬浮按钮 -->
@@ -207,10 +218,57 @@ const handleWishCreated = async () => {
   margin: 2rem 0;
 }
 
-.heart-divider {
-  color: #ff9a9e;
-  font-size: 1.5em;
-  margin: 0.5rem 0;
+.hand-drawn-divider {
+  position: relative;
+  margin: 2rem 0;
+  opacity: 0.8;
+}
+
+.brush-stroke {
+  width: 200px;
+  height: 20px;
+  animation: hand-drawn 2s ease-in-out infinite;
+}
+
+.stars {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateY(-50%);
+}
+
+.star {
+  position: absolute;
+  font-size: 30px;
+  color: white;
+  text-shadow: 0 0 4px #ff6b6b;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+/* 星星位置 */
+.star:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+.star:nth-child(2) { top: 30%; left: 20%; animation-delay: 0.5s; }
+.star:nth-child(3) { top: 50%; left: 35%; animation-delay: 1s; }
+.star:nth-child(4) { top: 70%; left: 50%; animation-delay: 1.5s; }
+.star:nth-child(5) { top: 90%; left: 65%; animation-delay: 2s; }
+.star:nth-child(6) { top: 20%; left: 80%; animation-delay: 0.5s; }
+.star:nth-child(7) { top: 40%; left: 95%; animation-delay: 1s; }
+.star:nth-child(8) { top: 60%; left: 10%; animation-delay: 1.5s; }
+.star:nth-child(9) { top: 80%; left: 25%; animation-delay: 2s; }
+.star:nth-child(10) { top: 10%; left: 90%; animation-delay: 0s; }
+
+/* 手绘线条动画 */
+@keyframes hand-drawn {
+  0%, 100% { transform: scaleX(0.98); }
+  50% { transform: scaleX(1.02); }
+}
+
+/* 星星闪烁动画 */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
 }
 
 .loading {
