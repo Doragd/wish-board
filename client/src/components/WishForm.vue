@@ -266,4 +266,32 @@ button[type='submit']:disabled {
 button[type='submit']:not(:disabled):hover {
   background: #ff4757;
 }
+
+@media (max-width: 600px) {
+  .wish-form {
+    padding: 0.75rem;
+  }
+  h2 {
+    font-size: 1.25rem;
+  }
+  input, textarea {
+    font-size: 0.9rem;
+  }
+}
+
+.wish-form {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 </style>

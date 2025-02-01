@@ -5,10 +5,16 @@
     <h1 class="romantic-title">
       <span>💌 给TA的心愿墙</span>
       <div class="hand-drawn-divider">
+        <!-- 左侧草莓熊 -->
+        <img src="../assets/bear.svg" alt="草莓熊" class="bear left-bear" />
+        <!-- 手绘分隔线 -->
         <svg viewBox="0 0 100 10" class="brush-stroke">
           <path d="M 0,5 Q 20,0 40,5 T 80,5 T 100,5" stroke="#ff6b6b" fill="none" stroke-width="2"
             stroke-linecap="round" />
         </svg>
+        <!-- 右侧草莓熊 -->
+        <img src="../assets/bear.svg" alt="草莓熊" class="bear right-bear" />
+        <!-- 星星 -->
         <div class="stars">
           <span class="star" v-for="n in 10" :key="n">✨</span>
         </div>
@@ -216,12 +222,43 @@ const handleWishCreated = async () => {
   position: relative;
   margin: 2rem 0;
   opacity: 0.8;
+  width: 100%; /* 确保分隔线宽度占满容器 */
+  display: flex;
+  justify-content: center; /* 分隔线居中 */
 }
 
 .brush-stroke {
-  width: 200px;
+  width: 200px; /* 分隔线宽度 */
   height: 20px;
   animation: hand-drawn 2s ease-in-out infinite;
+}
+
+/* 草莓熊样式 */
+.bear {
+  width: 60px; /* 调整大小 */
+  height: 60px; /* 调整大小 */
+  position: absolute;
+  top: -20px; /* 往上偏移，紧贴分隔线上方 */
+  filter: drop-shadow(0 0 4px hsl(66, 100%, 71%)); /* 添加粉色阴影 */
+  animation: float 3s ease-in-out infinite; /* 浮动动画 */
+}
+
+.left-bear {
+  left: calc(50% - 100px - 40px); /* 分隔线左端 */
+}
+
+.right-bear {
+  right: calc(50% - 100px - 40px); /* 分隔线右端 */
+}
+
+/* 草莓熊浮动动画 */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px); /* 浮动幅度减小 */
+  }
 }
 
 .stars {
