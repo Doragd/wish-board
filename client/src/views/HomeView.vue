@@ -2,9 +2,13 @@
 <template>
   <div class="home-container">
     <!-- 浪漫风格标题 -->
-    <h1 class="romantic-title">
-      <span>💌 给TA的心愿墙</span>
-      <div class="hand-drawn-divider">
+    <h1 class="app-style-title">
+  <span class="icon left-icon">💌</span>
+  <span class="text">心愿便利贴</span>
+  <span class="icon right-icon">💌</span>
+</h1>
+
+    <div class="hand-drawn-divider">
         <!-- 左侧草莓熊 -->
         <img src="../assets/bear.svg" alt="草莓熊" class="bear left-bear" />
         <!-- 手绘分隔线 -->
@@ -16,10 +20,9 @@
         <img src="../assets/bear.svg" alt="草莓熊" class="bear right-bear" />
         <!-- 星星 -->
         <div class="stars">
-          <span class="star" v-for="n in 10" :key="n">✨</span>
+          <span class="star" v-for="n in 6" :key="n">✨</span>
         </div>
       </div>
-    </h1>
 
     <!-- 新增悬浮按钮 -->
     <button class="float-button" @click="showForm = true">
@@ -148,6 +151,91 @@ const handleWishCreated = async () => {
 </script>
 
 <style scoped>
+
+/* ================== 标题容器 ================== */
+.app-style-title {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 0 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* 控制图标和文字之间的间距 */
+}
+
+
+/* ================== 主标题 ================== */
+.app-style-title .text {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff; /* 改为白色文字 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  position: relative;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 增加文字阴影，提升可读性 */
+}
+
+.app-style-title .text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #ff6b6b, #ff9a9e); /* 保留粉色渐变下划线 */
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: underline-grow 1.5s ease-in-out infinite;
+}
+
+/* ================== Emoji 图标 ================== */
+.app-style-title .icon {
+  font-size: 2rem;
+  color: #ff6b6b; /* 保留粉色 Emoji */
+  animation: icon-bounce 1.5s ease-in-out infinite;
+}
+
+/* 左侧图标 */
+.app-style-title .left-icon {
+  margin-right: 0.5rem; /* 与文字的间距 */
+}
+
+/* 右侧图标 */
+.app-style-title .right-icon {
+  margin-left: 0.5rem; /* 与文字的间距 */
+}
+
+/* ================== 动画效果 ================== */
+@keyframes icon-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes underline-grow {
+  0%, 100% {
+    transform: scaleX(0);
+  }
+  50% {
+    transform: scaleX(1);
+  }
+}
+
+/* ================== 响应式调整 ================== */
+@media (max-width: 768px) {
+  .app-style-title .text {
+    font-size: 1.8rem;
+  }
+
+  .app-style-title .icon {
+    font-size: 1.8rem;
+  }
+}
+
 /* 新增样式 */
 .float-button {
   position: fixed;
