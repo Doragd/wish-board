@@ -13,7 +13,7 @@ export const useWishStore = defineStore("wish", {
       this.loading = true;
       this.error = '';
       this.wishes = []; // 清空旧数据
-      
+
       try {
         this.wishes = await fetchWishes();
       } catch (err) {

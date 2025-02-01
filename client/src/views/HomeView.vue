@@ -5,17 +5,14 @@
     <h1 class="romantic-title">
       <span>💌 给TA的心愿墙</span>
       <div class="hand-drawn-divider">
-  <svg viewBox="0 0 100 10" class="brush-stroke">
-    <path d="M 0,5 Q 20,0 40,5 T 80,5 T 100,5" 
-          stroke="#ff6b6b" 
-          fill="none"
-          stroke-width="2"
-          stroke-linecap="round"/>
-  </svg>
-  <div class="stars">
-    <span class="star" v-for="n in 10" :key="n">✨</span>
-  </div>
-</div>
+        <svg viewBox="0 0 100 10" class="brush-stroke">
+          <path d="M 0,5 Q 20,0 40,5 T 80,5 T 100,5" stroke="#ff6b6b" fill="none" stroke-width="2"
+            stroke-linecap="round" />
+        </svg>
+        <div class="stars">
+          <span class="star" v-for="n in 10" :key="n">✨</span>
+        </div>
+      </div>
     </h1>
 
     <!-- 新增悬浮按钮 -->
@@ -32,7 +29,7 @@
 
     <!-- 心愿列表 -->
     <div v-if="loading" class="loading">✨ 正在加载心愿...</div>
-    
+
     <div v-else-if="error" class="error">
       😢 加载失败：{{ error }}
     </div>
@@ -49,18 +46,14 @@
             ❤️ {{ wish.likes }}
           </div>
         </div>
-        
+
         <p class="content">{{ wish.content }}</p>
-        
+
         <div class="meta">
           <span class="time">📅 {{ formatDate(wish.createdAt) }}</span>
           <div class="labels">
-            <span 
-              v-for="label in wish.labels" 
-              :key="label"
-              class="label"
-              :style="{ backgroundColor: getLabelColor(label) }"
-            >
+            <span v-for="label in wish.labels" :key="label" class="label"
+              :style="{ backgroundColor: getLabelColor(label) }">
               {{ label }}
             </span>
           </div>
@@ -200,6 +193,7 @@ const handleWishCreated = async () => {
     transform: translateY(20px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -248,27 +242,92 @@ const handleWishCreated = async () => {
 }
 
 /* 星星位置 */
-.star:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
-.star:nth-child(2) { top: 30%; left: 20%; animation-delay: 0.5s; }
-.star:nth-child(3) { top: 50%; left: 35%; animation-delay: 1s; }
-.star:nth-child(4) { top: 70%; left: 50%; animation-delay: 1.5s; }
-.star:nth-child(5) { top: 90%; left: 65%; animation-delay: 2s; }
-.star:nth-child(6) { top: 20%; left: 80%; animation-delay: 0.5s; }
-.star:nth-child(7) { top: 40%; left: 95%; animation-delay: 1s; }
-.star:nth-child(8) { top: 60%; left: 10%; animation-delay: 1.5s; }
-.star:nth-child(9) { top: 80%; left: 25%; animation-delay: 2s; }
-.star:nth-child(10) { top: 10%; left: 90%; animation-delay: 0s; }
+.star:nth-child(1) {
+  top: 10%;
+  left: 5%;
+  animation-delay: 0s;
+}
+
+.star:nth-child(2) {
+  top: 30%;
+  left: 20%;
+  animation-delay: 0.5s;
+}
+
+.star:nth-child(3) {
+  top: 50%;
+  left: 35%;
+  animation-delay: 1s;
+}
+
+.star:nth-child(4) {
+  top: 70%;
+  left: 50%;
+  animation-delay: 1.5s;
+}
+
+.star:nth-child(5) {
+  top: 90%;
+  left: 65%;
+  animation-delay: 2s;
+}
+
+.star:nth-child(6) {
+  top: 20%;
+  left: 80%;
+  animation-delay: 0.5s;
+}
+
+.star:nth-child(7) {
+  top: 40%;
+  left: 95%;
+  animation-delay: 1s;
+}
+
+.star:nth-child(8) {
+  top: 60%;
+  left: 10%;
+  animation-delay: 1.5s;
+}
+
+.star:nth-child(9) {
+  top: 80%;
+  left: 25%;
+  animation-delay: 2s;
+}
+
+.star:nth-child(10) {
+  top: 10%;
+  left: 90%;
+  animation-delay: 0s;
+}
 
 /* 手绘线条动画 */
 @keyframes hand-drawn {
-  0%, 100% { transform: scaleX(0.98); }
-  50% { transform: scaleX(1.02); }
+
+  0%,
+  100% {
+    transform: scaleX(0.98);
+  }
+
+  50% {
+    transform: scaleX(1.02);
+  }
 }
 
 /* 星星闪烁动画 */
 @keyframes twinkle {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.2); }
+
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
 .loading {
@@ -349,7 +408,8 @@ const handleWishCreated = async () => {
   max-height: 90vh;
   overflow-y: auto;
   animation: modalEnter 0.3s ease-out;
-  box-sizing: border-box; /* 防止内容溢出 */
+  box-sizing: border-box;
+  /* 防止内容溢出 */
 }
 
 @media (max-width: 600px) {
